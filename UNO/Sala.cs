@@ -60,6 +60,7 @@ namespace UNO
             this.BackColor = Color.WhiteSmoke;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            CargarFondo("fondoSala.jpg");
 
             lblTituloSala = new Label
             {
@@ -223,8 +224,39 @@ namespace UNO
                 }
 
                 Jugador nuevo = new Jugador(dlg.NombreElegido, dlg.NumeroAvatar);
+
+                //Guardar en mi bd
+                try
+                {
+                    int id;
+                    int ganadas, perdidas;
+
+                    id = JugadorDAO.ObtenerOCrear(dlg.NombreElegido, out ganadas, out perdidas);
+
+                    nuevo.IdJugador = id;
+
+                    int partidaN = ganadas + perdidas + 1;
+
+                    MessageBox.Show(
+                        $"¡Bienvenido, {dlg.NombreElegido}!\n\n" +
+                        $"Partida #{partidaN}\n" +
+                        $"Ganadas: {ganadas}  |  Perdidas: {perdidas}",
+                        "Jugador cargado",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        "No se pudo guardar el jugador en la BD.\n\n" + ex.Message,
+                        "Aviso de BD",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+
                 jugadores.Add(nuevo);
                 listos[nuevo] = false;
+
                 ActualizarUI();
             }
         }
@@ -372,6 +404,20 @@ namespace UNO
             }
 
             lblLider.Text = $"Jugadores: {jugadores.Count} / {MAX_JUGADORES}";
+        }
+
+        private void CargarFondo(string nombreArchivo)
+        {
+            string ruta = Path.Combine(Application.StartupPath, "Fondos", nombreArchivo);
+
+            if (File.Exists(ruta))
+            {
+                using (var stream = new FileStream(ruta, FileMode.Open, FileAccess.Read))
+                {
+                    this.BackgroundImage = Image.FromStream(stream);
+                    this.BackgroundImageLayout = ImageLayout.Stretch;
+                }
+            }
         }
     }
 }

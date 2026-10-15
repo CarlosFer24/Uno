@@ -4,9 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System;
-using System.Collections.Generic;
-
 namespace UNO
 {
     public class Mazo
@@ -29,15 +26,13 @@ namespace UNO
 
             foreach (ColorCarta color in colores)
             {
-                Cartas.Add(new Carta(color, 0));
-
                 for (int n = 1; n <= 9; n++)
                 {
                     Cartas.Add(new Carta(color, n));
                     Cartas.Add(new Carta(color, n));
                 }
 
-                // Dos de cada carta especial de color
+                // Dos de cada carta especial
                 for (int i = 0; i < 2; i++)
                 {
                     Cartas.Add(new Carta(color, TipoCarta.Salta));
